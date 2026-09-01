@@ -21,8 +21,6 @@ public:
 	Optimizer() = default;
 	Optimizer(std::vector<std::shared_ptr<Tensor>> _param)
 	{
-		std::sort(_param.begin(), _param.end());
-		_param.erase(std::unique(_param.begin(), _param.end()), _param.end());
 		parameters = _param;
 	}
 	virtual ~Optimizer() = default;
@@ -77,6 +75,20 @@ public:
 			}
 		}
 	}
+};
+
+class AdaGrad : public Optimizer
+{
+public:
+	AdaGrad() {}
+	AdaGrad(std::vector<std::shared_ptr<Tensor>> _param) : Optimizer(_param) {}
+};
+
+class RMSProp : public Optimizer
+{
+public:
+	RMSProp() {}
+	RMSProp(std::vector<std::shared_ptr<Tensor>> _param) : Optimizer(_param) {}
 };
 
 class AdamW : public Optimizer

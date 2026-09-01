@@ -4,47 +4,16 @@
 #include "module/module.h"
 #include "module/loss.h"
 #include "module/optimizer.h"
+#include "module/mlp.h"
 
 const unsigned int seed = 114514;
 const double eps = 1e-4;
 
-class MLP : public fish::BaseNet
-{
-public:
-	fish::SequentialNet net;
-
-	MLP() {}
-	MLP(size_t _input_size, size_t _hidden_size, size_t _output_size)
-	{
-		net = fish::SequentialNet({std::make_shared<fish::FullyConnectedLayer>(fish::FullyConnectedLayer(_input_size, _hidden_size)),
-		                           std::make_shared<fish::ReLULayer>(fish::ReLULayer()),
-						   std::make_shared<fish::FullyConnectedLayer>(fish::FullyConnectedLayer(_hidden_size, _output_size))});
-	}
-	MLP(size_t _input_size, size_t _hidden_size_1, size_t _hidden_size_2, size_t _output_size)
-	{
-		net = fish::SequentialNet({std::make_shared<fish::FullyConnectedLayer>(fish::FullyConnectedLayer(_input_size, _hidden_size_1)),
-		                           std::make_shared<fish::ReLULayer>(fish::ReLULayer()),
-						   std::make_shared<fish::FullyConnectedLayer>(fish::FullyConnectedLayer(_hidden_size_1, _hidden_size_2)),
-						   std::make_shared<fish::ReLULayer>(fish::ReLULayer()),
-						   std::make_shared<fish::FullyConnectedLayer>(fish::FullyConnectedLayer(_hidden_size_2, _output_size))});
-	}
-
-	std::shared_ptr<fish::Tensor> forward(std::shared_ptr<fish::Tensor> x) const
-	{
-		return net.forward(x);
-	}
-
-	std::vector<std::shared_ptr<fish::Tensor>> collectParameters()
-	{
-		return net.collectParameters();
-	}
-};
-
-MLP net;
-fish::SGD optim;
-
 namespace XorDataset
 {
+	fish::MLP net;
+	fish::SGD optim;
+
 	const int epoch = 1000000;
 	const double learn_rate = 0.0001;
 	const double momentum = 0.9;
@@ -80,7 +49,7 @@ namespace XorDataset
 
 	void init()
 	{
-		net = MLP(2, 64, 64, 1);
+		net = fish::MLP({2, 64, 64, 1});
 		optim = fish::SGD(net.collectParameters(), learn_rate, momentum, weight_decay);
 	}
 
@@ -88,6 +57,7 @@ namespace XorDataset
 	{
 		buildDataset();
 		init();
+
 
 		// 训练
 		for(int i = 1; i <= epoch; i++)

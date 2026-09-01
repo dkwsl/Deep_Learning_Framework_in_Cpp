@@ -8,6 +8,7 @@
 #include <random>
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include "autograd.h"
 
 namespace fish
@@ -70,6 +71,8 @@ public:
 			param.reserve(param.size() + layer_param.size());
 			param.insert(param.end(), layer_param.begin(), layer_param.end());
 		}
+		std::sort(param.begin(), param.end());
+		param.erase(std::unique(param.begin(), param.end()), param.end());
 		return param;
 	}
 };
@@ -110,7 +113,10 @@ public:
 
 	std::vector<std::shared_ptr<Tensor>> collectParameters()
 	{
-		return {weight, bias};
+		std::vector<std::shared_ptr<Tensor>> param = {weight, bias};
+		std::sort(param.begin(), param.end());
+		param.erase(std::unique(param.begin(), param.end()), param.end());
+		return param;
 	}
 };
 

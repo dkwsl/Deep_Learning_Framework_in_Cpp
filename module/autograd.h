@@ -366,7 +366,7 @@ inline double ReLU(double x)
 {
 	return x > 0 ? x : 0;
 }
-// 对矩阵全部函数作用 ReLU.
+// 对矩阵全部元素作用 ReLU.
 std::shared_ptr<Tensor> ReLU(std::shared_ptr<Tensor> a)
 {
 	std::vector<double> res_data(a->data.size());
