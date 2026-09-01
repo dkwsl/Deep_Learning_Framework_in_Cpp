@@ -5,6 +5,7 @@
 #ifndef _OPTIMIZER_H
 #define _OPTIMIZER_H
 
+#include <cmath>
 #include <memory>
 #include <vector>
 #include <algorithm>
@@ -80,8 +81,35 @@ public:
 class AdaGrad : public Optimizer
 {
 public:
+	double learn_rate = 0.0;
+	double eps = 1e-8;
+	std::vector<std::shared_ptr<Tensor>> sqsum;
+
 	AdaGrad() {}
-	AdaGrad(std::vector<std::shared_ptr<Tensor>> _param) : Optimizer(_param) {}
+	AdaGrad(std::vector<std::shared_ptr<Tensor>> _param, double _learn_rate, double _eps = 1e-8) : Optimizer(_param), learn_rate(_learn_rate), eps(_eps)
+	{
+		sqsum.resize(_param.size());
+		for(int i = 0; i < _param.size(); i++)
+		{
+			sqsum[i] = std::make_shared<Tensor>(Tensor(std::vector<double>(_param[i]->data.size()), _param[i]->shape));
+		}
+	}
+
+	void update()
+	{
+		for(int i = 0; i < parameters.size(); i++)
+		{
+			if(parameters[i]->grad == nullptr)
+			{
+				parameters[i]->grad = std::make_shared<Tensor>(Tensor(std::vector<double>(parameters[i]->data.size()), parameters[i]->shape));
+			}
+			for(int j = 0; j < parameters[i]->data.size(); j++)
+			{
+				sqsum[i]->data[j] += parameters[i]->grad->data[j] * parameters[i]->grad->data[j];
+				parameters[i]->data[j] -= learn_rate / sqrt(sqsum[i]->data[j] + eps) * parameters[i]->grad->data[j];
+			}
+		}
+	}
 };
 
 class RMSProp : public Optimizer
@@ -89,6 +117,11 @@ class RMSProp : public Optimizer
 public:
 	RMSProp() {}
 	RMSProp(std::vector<std::shared_ptr<Tensor>> _param) : Optimizer(_param) {}
+
+	void update()
+	{
+		;
+	}
 };
 
 class AdamW : public Optimizer

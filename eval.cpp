@@ -12,10 +12,11 @@ const double eps = 1e-4;
 namespace XorDataset
 {
 	fish::MLP net;
-	fish::SGD optim;
+	//fish::SGD optim;
+	fish::AdaGrad optim;
 
 	const int epoch = 1000000;
-	const double learn_rate = 0.0001;
+	const double learn_rate = 0.01;
 	const double momentum = 0.9;
 	const double weight_decay = 0.0001;
 
@@ -50,7 +51,8 @@ namespace XorDataset
 	void init()
 	{
 		net = fish::MLP({2, 64, 64, 1});
-		optim = fish::SGD(net.collectParameters(), learn_rate, momentum, weight_decay);
+		//optim = fish::SGD(net.collectParameters(), learn_rate, momentum, weight_decay);
+		optim = fish::AdaGrad(net.collectParameters(), learn_rate);
 	}
 
 	void run()
