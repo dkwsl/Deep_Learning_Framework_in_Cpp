@@ -79,6 +79,21 @@ public:
 	}
 };
 
+class AdamW : public Optimizer
+{
+public:
+	double learn_rate = 0.0;
+	double weight_decay = 0.0;
+
+	AdamW() {}
+	AdamW(std::vector<std::shared_ptr<Tensor>> _param, double _learn_rate, double _weight_decay = 0.0) : Optimizer(_param), learn_rate(_learn_rate), weight_decay(_weight_decay) {}
+
+	void update()
+	{
+		;
+	}
+};
+
 }
 
 #endif
