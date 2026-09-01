@@ -14,7 +14,8 @@ namespace XorDataset
 	fish::MLP net;
 	//fish::SGD optim;
 	//fish::AdaGrad optim;
-	fish::RMSProp optim;
+	//fish::RMSProp optim;
+	fish::AdamW optim;
 
 	const int epoch = 1000000;
 	const double learn_rate = 0.001;
@@ -54,7 +55,8 @@ namespace XorDataset
 		net = fish::MLP({2, 64, 64, 1});
 		//optim = fish::SGD(net.collectParameters(), learn_rate, momentum, weight_decay);
 		//optim = fish::AdaGrad(net.collectParameters(), learn_rate);
-		optim = fish::RMSProp(net.collectParameters(), learn_rate);
+		//optim = fish::RMSProp(net.collectParameters(), learn_rate);
+		optim = fish::AdamW(net.collectParameters());
 	}
 
 	void run()
